@@ -1,0 +1,13 @@
+module.exports = {
+	secret: "",
+	database: "",
+	port: 8000,
+	uploadPath: "",
+	email: '',
+	EMAIL_HOST: "",
+	EMAIL_PORT: null,
+	EMAIL_AUTH: {
+		user: "",
+		pass: ""
+	}
+}
