@@ -1,6 +1,6 @@
 # Email Sender Api
 
-Uma API de utilidades, escrita em node.js, com a finalidade de fazer envios de emails.
+A utility API, written in node.js, for the purpose of sending emails.
 
 ## :wrench: Setup
 
