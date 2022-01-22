@@ -6,8 +6,6 @@ const response = require('../../trait/response-trait')
 const { validationResult } = require("express-validator");
 
 exports.login = async (req, res) => {
-	console.log(req.body)
-
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
@@ -35,22 +33,24 @@ exports.login = async (req, res) => {
 };
 
 exports.registrar = async (req, res) => {
+	const { body: { email, nome } } = req;
+
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-	const user = await Usuario.findOne({ email: req.body.email });
+	const user = await Usuario.findOne({ email: email });
 
 	if (user) response.error(res);
 
 	var usuario = new Usuario(req.body);
 
-	const data = await usuario.save();
+	const data_usu = await usuario.save();
 
-	var beAToken = { email: data.email, nome: data.nome, id: data.id };
+	var beAToken = { email: data_usu.email, nome: data_usu.nome, id: data_usu.id };
 
 	var token = jwt.sign(beAToken, config.secret, { expiresIn: "365d" });
 
-	if (data) response.success(res, message = 'Registro efetuado com sucesso!', data = { user: req.body, token: token });
+	if (data_usu) response.success(res, message = 'Registro efetuado com sucesso!', data = `Your token: ${token}`);
 	else response.error(res, message = 'Registro não foi efetuado');
 };

@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const response = require('../../trait/response-trait');
 
 exports.sendEmail = async (req, res) => {
-	const { body } = req;
+	const { body: { email, subject, text } } = req;
 
 	var transporter = nodemailer.createTransport({
 		host: config.EMAIL_HOST,
@@ -12,16 +12,12 @@ exports.sendEmail = async (req, res) => {
 	});
 
 	let info = await transporter.sendMail({
-		from: body.email,
-		to: 'gabriellarocca1@outlook.com', // list of receivers
-		subject: "Hello ✔", // Subject line
-		text: "Hello world?", // plain text body
-		html: "<b>Hello world?</b>", // html body
+		from: email,
+		to: config.EMAIL,
+		subject: subject,
+		text: text,
 	});
 
-	if (info) {
-		response.success(res, message = 'Email ok!', data = info);
-	} else {
-		response.error(res, message = 'Email error!', data = info);
-	}
+	if (info) response.success(res, message = 'Email ok!', data = info);
+	else response.error(res, message = 'Email error!', data = info);
 };
