@@ -11,4 +11,5 @@ Uma API de utilidades, escrita em node.js, com a finalidade de fazer envios de e
 ## 👨‍💻 Technologies used
 
 - Node.js;
+- Express.js;
 - Mongoose 6.1.7;
