@@ -12,21 +12,21 @@ exports.login = async (req, res) => {
 	const user = await Usuario.findOne({ email: req.body.email });
 
 	if (!user) {
-		response.error(res, message = 'Usuario não encontrado', data = { email: req.body.email });
+		return response.error(res, message = 'Usuario não encontrado');
 	} else {
-		bcrypt.compare(req.body.password, user.password, async (error, response) => {
-			if (response) {
+		bcrypt.compare(req.body.password, user.password, async (error, response_bcrypt) => {
+			if (response_bcrypt) {
 				user.pushToken = req.body.pushToken;
 
 				await user.save();
 
-				var beAToken = { email: data.email, nome: data.nome, id: data.id };
+				var beAToken = { email: user.email, nome: user.nome, id: user.id };
 
 				var token = jwt.sign(beAToken, config.secret, { expiresIn: "365d" });
 
-				response.success(res, message = 'Login efetuado com sucesso!', data = token);
+				return response.success(res, message = 'Login efetuado com sucesso!', data = `Seu token: ${token}`);
 			} else {
-				response.error(res, message = 'Usuario não encontrado');
+				return response.error(res, message = 'Usuario não encontrado');
 			}
 		});
 	}
@@ -41,16 +41,18 @@ exports.registrar = async (req, res) => {
 
 	const user = await Usuario.findOne({ email: email });
 
-	if (user) response.error(res);
+	if (user) {
+		return response.error(res, message = 'Registro não foi efetuado');
+	} else {
+		var usuario = new Usuario(req.body);
 
-	var usuario = new Usuario(req.body);
+		const data_usu = await usuario.save();
 
-	const data_usu = await usuario.save();
+		var beAToken = { email: data_usu.email, nome: data_usu.nome, id: data_usu.id };
 
-	var beAToken = { email: data_usu.email, nome: data_usu.nome, id: data_usu.id };
+		var token = jwt.sign(beAToken, config.secret, { expiresIn: "365d" });
 
-	var token = jwt.sign(beAToken, config.secret, { expiresIn: "365d" });
-
-	if (data_usu) response.success(res, message = 'Registro efetuado com sucesso!', data = `Your token: ${token}`);
-	else response.error(res, message = 'Registro não foi efetuado');
+		if (data_usu) return response.success(res, message = 'Registro efetuado com sucesso!', data = `Your token: ${token}`);
+		else return response.error(res, message = 'Registro não foi efetuado');
+	}
 };

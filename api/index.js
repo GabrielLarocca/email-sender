@@ -23,9 +23,10 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth", require("./app/usuario"))
-app.use("/api/email", require("./app/email"))
 
-// app.use("/api/v1", jwt);
+app.use("/api", jwt);
+
+jwt.use("/email", require("./app/email"));
 
 server.listen('8000', "0.0.0.0");
 console.log("Server start on port 8000");
